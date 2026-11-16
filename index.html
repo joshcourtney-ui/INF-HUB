@@ -1,0 +1,31 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="I&amp;F Hub"><meta name="theme-color" content="#0f1216">
+<title>Tenicor I&amp;F Hub</title><link rel="stylesheet" href="style.css"></head><body>
+<header><div class="kicker">Tenicor · Inventory &amp; Fulfillment</div><h1 id="h">I&amp;F Hub</h1><p class="sub" id="sub">Enter the team password to continue.</p></header>
+<main id="app">
+<form id="gate" class="panel" autocomplete="on">
+<label for="pw" class="note">Password</label>
+<input id="pw" type="password" autocomplete="current-password" autofocus required class="input">
+<button class="btn" type="submit" style="width:100%;border:0;margin-top:12px">Unlock</button>
+<p id="err" class="err" role="alert" hidden>Wrong password. Try again.</p>
+</form></main><footer>Internal use only.</footer>
+<script>
+const BLOB={"salt": "dgZkTbxHOBpyXWAea26fqQ==", "iv": "M2litWxQp6lo0dr7", "it": 250000, "ct": "ID3fJgDtjJYrPCYddJO9vZkqInvLBAhdYQ0SqlCrNdfOfk1ipCYm5DqhB4wcEmZH8ZdEj7jPAhhHHiZTDCBo6IAo0FsS8hKpLPNq520kWmRqfPqNtFOkKnU4fsrEzONhxBBIJww1HSABHdPhQ9Cn7SSx+FUS0jtdZ22hPJHx59tSQm0Q51D+o1nQWTOmyI7p5cGnt0dtILz28HBG/sAz7FOHa58BTwz/esZjLWb4ZcPbZDXQ5PuxpVM+xAkvChx52TQUFd9L0Gn4OmfJ/QnPkw6vpyBZuu5qCCpAV9gnQ53wtl4rUwzFlT8IpNuF5QbF86YOrpQmRx+q3IZnGg5iM8hLSRLPug2im2zw49g2oF9ZwH9oAnjSC/mGrxHbRdV4KIUmcyFB8Sd1vpwTFDDIJmNM57N4/PvhAq9hESrA9DGwvv0Ro7lGiCNHczlWBjZlBxY/0Q+sHK+hs9nbE3N3tyRDVY6Fj0els23bTStIUmGPIDhvsk1k8gi+M/cLNiTW0yi/+MGIyoi+8hB4r3VmrBmdIEKV3BN+mFt0uPEUROFHL2zJIsbcWnX/dOUcZDEvXVHO1vDz9H+etx/9FTPqT3Vthyaj2KTJMBHCergkx5cdSzIjH4obe3iKy2OaZ0FDrQNX/PtuwitoW1tFRHd/ur1enHTlWe2T8M0BrOX5qcQqAfeK58lQ+RPn+9yC334HTly2TQII5px5f/6AV+ylCoRMgK6w4oDpcTcsYu2FUxlgyrZf5W+NLziyQ41xwgelq7OnkCkiOWPEY3Giyf6iwPCCyUbePNfzUZX1cViXgtAAEMWP/wUgqLIKmz4MwBuW8F/8zAm6meHZKaHxqM3RtwzN2BfPoLaI3d+gdH0OepoA3roInI4TMbE3L+XIkRTOCEucgdKEVmGfGkW/5tClHTDNsGm9IS/e4RhokYYsjwim//NjP39TeaPs99nbka37a4Oo9KE6bIk0ne6ABLhGrZbaiDO7UTbUNJT8NbocLAj1EOM4REGDktex+cq70XVR9YAFY9u33ocuVci51fe1wOEkwGKDcNtLwlqYoRoGXBz8hh5ZSfSylQ+FNuKbipzmJrqeXSMVh6CNKz76YIawmlDr+BIYxlMWGHORLQHgutly9mh2lmzRpj84lSunITHy5vPj0TnJmDvu8NTkdXp4zjDTNocbJinmIyHFvzM="};
+const d=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function unlock(pw){const k=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);
+const key=await crypto.subtle.deriveKey({name:'PBKDF2',salt:d(BLOB.salt),iterations:BLOB.it,hash:'SHA-256'},k,{name:'AES-GCM',length:256},false,['decrypt']);
+const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:d(BLOB.iv)},key,d(BLOB.ct));return JSON.parse(new TextDecoder().decode(pt));}
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let DATA=null;
+function render(){const app=document.getElementById('app'),id=location.hash.slice(1),a=DATA.artifacts.find(x=>x.id===id);
+if(a){document.getElementById('h').textContent=a.title;document.getElementById('sub').textContent=a.summary;
+app.innerHTML=`<a class="back" href="#">← I&amp;F Hub</a><a class="btn" href="${esc(a.url)}" target="_blank" rel="noopener noreferrer">Open live view</a><div class="panel"><p class="note">Snapshot when added (11/16/26): ${esc(a.snapshot)} Numbers update live in the source.</p></div><p class="note">Opens in Claude. Claude doesn't allow these views to be embedded in other sites.</p>`;}
+else{document.getElementById('h').textContent='I&F Hub';document.getElementById('sub').textContent='Internal tools and live views. Tap a card to open.';
+app.innerHTML=DATA.artifacts.map(a=>`<a class="card" href="#${a.id}"><h2>${esc(a.title)}</h2><p>${esc(a.summary)}</p><span class="go">Open →</span></a>`).join('')+`<button class="btn secondary" id="lock" style="width:100%">Lock</button>`;
+document.getElementById('lock').onclick=()=>{sessionStorage.removeItem('ifhub');location.hash='';location.reload();};}
+window.scrollTo(0,0);}
+async function tryPw(pw,silent){try{DATA=await unlock(pw);sessionStorage.setItem('ifhub',pw);render();window.onhashchange=render;return true;}
+catch(e){if(!silent){const er=document.getElementById('err');er.hidden=false;document.getElementById('pw').value='';document.getElementById('pw').focus();}return false;}}
+document.getElementById('gate').onsubmit=e=>{e.preventDefault();tryPw(document.getElementById('pw').value,false);};
+const saved=sessionStorage.getItem('ifhub');if(saved)tryPw(saved,true);
+</script></body></html>
